@@ -19,7 +19,7 @@ def parse_arguments():
                         help='Location of pre-trained VGG')
     parser.add_argument('--experiment',type=str,default='experiment1',
                         help='Name of experiment')
-    parser.add_argument('--final_size',type=int,default=512,
+    parser.add_argument('--final_size',type=int,default=256,
                         help='Size of final image')
     parser.add_argument('--content_size',type=int,default=256,
                         help='Size of content image')
@@ -28,7 +28,7 @@ def parse_arguments():
     parser.add_argument('--crop',action='store_true',default=True,
                         help='Crop image')
     
-    parser.add_argument('--batch_size', type=int, default=4,
+    parser.add_argument('--batch_size', type=int, default=1,
                         help='Batch size')
     parser.add_argument('--lr',type=float,default=1e-4,
                         help='Learning rate')
@@ -44,7 +44,7 @@ def parse_arguments():
                         help='Style weight')
     parser.add_argument('--log_interval',type=int,default=1,
                         help='Log interval')
-    parser.add_argument('--save_interval',type=int,default=2,
+    parser.add_argument('--save_interval',type=int,default=5,
                         help='Save interval')
     parser.add_argument('--resume',action='store_true',default=False,
                         help='Resume training')
@@ -59,6 +59,7 @@ def main():
     args=parse_arguments()
     
     device=torch.device("cpu")
+    torch.set_num_threads(1)
     save_dir=Path('experiment')/args.experiment
     save_dir.mkdir(exist_ok=True,parents=True)
 
@@ -77,12 +78,12 @@ def main():
     content_dataloader=DataLoader(content_dataset,
                                   batch_size=args.batch_size,
                                   shuffle=True,
-                                  pin_memory=True,
+                                  pin_memory=False,
                                   drop_last=True)
     style_dataloader=DataLoader(style_dataset,
                                 batch_size=args.batch_size,
                                 shuffle=True,
-                                pin_memory=True,
+                                pin_memory=False,
                                 drop_last=True)
     
     print('Number of batches in content dataset: ',len(content_dataloader))
@@ -98,8 +99,8 @@ def main():
     )
     
     if args.resume:
-        decoder.load_state_dict(torch.load(args.decoder_path))
-        optimizer.load_state_dict(torch.load(args.optimizer_path))
+        decoder.load_state_dict(torch.load(args.decoder_path,map_location=device))
+        optimizer.load_state_dict(torch.load(args.optimizer_path,map_location=device))
     
     print('Training...')
     
@@ -123,9 +124,10 @@ def main():
             
             content_batch=content_batch.to(device)
             style_batch=style_batch.to(device)
-            
-            c_feats=encoder(content_batch)
-            s_feats=encoder(style_batch)
+
+            with torch.no_grad():
+                c_feats=encoder(content_batch)
+                s_feats=encoder(style_batch)
              
             t=adaptive_instance_normalization(c_feats[-1],s_feats[-1])
             
