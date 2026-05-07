@@ -58,7 +58,7 @@ def parse_arguments():
 def main():
     args=parse_arguments()
     
-    device=torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device=torch.device("cpu")
     save_dir=Path('experiment')/args.experiment
     save_dir.mkdir(exist_ok=True,parents=True)
 
