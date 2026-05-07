@@ -22,6 +22,10 @@ Bootstrap(app)
 
 os.makedirs(app.config['UPLOAD_FOLDER'],exist_ok=True)
 
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+    
 class UploadForm(FlaskForm):
     content=FileField('Content Image')
     style=FileField('Style Image')
