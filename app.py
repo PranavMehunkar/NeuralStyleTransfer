@@ -131,6 +131,9 @@ def index():
                 
                 result_image=result_filename
             except Exception as e:
+                import traceback
+                traceback.print_exc()
+                print("ERROR:", e)
                 error=str(e)
     else:
         if not content_filename:
