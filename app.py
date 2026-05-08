@@ -149,4 +149,6 @@ def send_image(filename):
 def send_example(filename):
     return send_from_directory('examples',filename)
 
-demo.launch(server_name="0.0.0.0", server_port=7860)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
