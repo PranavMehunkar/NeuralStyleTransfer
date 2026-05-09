@@ -53,13 +53,13 @@ To run Neural Style Transfer locally, follow these steps:
     <code>pip install flask</code></pre>
 </div>
 
-<h3>5. Run the development server:</h3>
+<h3>4. Run the development server:</h3>
 
 <div class="bg-light p-3 rounded border">
   <pre class="mb-0">
     <code>python app.py</code></pre>
 </div>
-<h3>6. Open your browser and navigate to:</h3>
+<h3>5. Open your browser and navigate to:</h3>
 
 <div class="bg-light p-3 rounded border">
   <pre class="mb-0">
