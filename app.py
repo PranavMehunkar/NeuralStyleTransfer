@@ -27,7 +27,7 @@ class UploadForm(FlaskForm):
     style=FileField('Style Image')
     content_path=HiddenField()
     style_path=HiddenField()
-    alpha=FloatField('Alpha',default=1.0)
+    alpha=FloatField('Alpha',default=0.6)
     submit=SubmitField('Transfer Style')
     
 device=torch.device("cpu")
@@ -54,12 +54,20 @@ def allowed_file(filename):
 def style_transfer(content_image,style_image,encoder,decoder,alpha,device):
     content_transform = transforms.Compose([
         transforms.Resize((256,256)),
-        transforms.ToTensor()
+        transforms.ToTensor(),
+        transforms.Normalize(
+            mean=[0.485,0.456,0.406],
+            std=[0.229,0.224,0.225]
+        )
     ])
 
     style_transform = transforms.Compose([
         transforms.Resize((256,256)),
-        transforms.ToTensor()
+        transforms.ToTensor(),
+        transforms.Normalize(
+            mean=[0.485,0.456,0.406],
+            std=[0.229,0.224,0.225]
+        )
     ])
 
     content_image=content_transform(content_image).unsqueeze(0).to(device)
